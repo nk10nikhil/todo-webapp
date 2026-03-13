@@ -58,8 +58,8 @@ function TaskDrawer({ currentView, isOpen, setIsOpen }) {
 
           <div
             className={`${
-              isFullScreen ? "w-full" : "w-1/2"
-            } flex flex-col py-3  justify-start duration-500 gap-4 bg-white shadow-md h-screen`}
+              isFullScreen ? "w-full" : "w-full md:w-1/2"
+            } flex flex-col py-3 justify-start duration-500 gap-4 bg-white shadow-md h-screen`}
           >
             <div className="flex justify-between px-4">
               <button
@@ -76,14 +76,14 @@ function TaskDrawer({ currentView, isOpen, setIsOpen }) {
                 X
               </button>
             </div>
-            <div className="flex flex-col h-full gap-4 px-16 py-10">
+            <div className="flex flex-col h-full gap-4 px-4 md:px-16 py-6 md:py-10">
               <div>
                 Status:{" "}
                 <select
                   // value={viewId}
                   defaultValue={currentView.id}
                   onChange={(e) => handleViewChange(e.target.value)}
-                  className={`${currentView.color} ml-4 w-1/2 outline-none rounded`}
+                  className={`${currentView.color} ml-2 md:ml-4 w-full md:w-1/2 outline-none rounded`}
                   // onBlur={handleViewChange}
                 >
                   {viewItems.map((view) => (
@@ -97,7 +97,7 @@ function TaskDrawer({ currentView, isOpen, setIsOpen }) {
                   ))}
                 </select>
               </div>
-              <div className="text-3xl font-semibold text-slate-600 flex gap-2">
+              <div className="text-xl md:text-3xl font-semibold text-slate-600 flex gap-2 items-center">
                 Task:
                 <input
                   type="text"
@@ -112,10 +112,10 @@ function TaskDrawer({ currentView, isOpen, setIsOpen }) {
                   }}
                 />
               </div>
-              <div className="text-slate-700 font-semibold text-lg h-1/3 flex flex-col gap-3">
+              <div className="text-slate-700 font-semibold text-base md:text-lg h-1/3 flex flex-col gap-3">
                 Description: <br />
                 <textarea
-                  className="w-full h-2/3 bg-slate-100 font-normal p-3 rounded text-slate-700 placeholder:font-normal text-sm outline-none"
+                  className="w-full h-40 md:h-2/3 bg-slate-100 font-normal p-3 rounded text-slate-700 placeholder:font-normal text-sm outline-none"
                   placeholder="Type something..."
                   autoFocus
                   value={description}
@@ -123,17 +123,17 @@ function TaskDrawer({ currentView, isOpen, setIsOpen }) {
                   onBlur={handleBlur}
                 />
               </div>
-              <div className="flex gap-4 justify-end">
+              <div className="flex flex-col md:flex-row gap-3 md:gap-4 justify-end mt-auto">
                 <button
                   onClick={handleClose}
-                  className="font-semibold text-blue-600 border-2 border-blue-500 rounded px-3 hover:drop-shadow-lg hover:bg-blue-500 hover:text-white duration-500"
+                  className="font-semibold text-blue-600 border-2 border-blue-500 rounded px-3 py-2 hover:drop-shadow-lg hover:bg-blue-500 hover:text-white duration-500"
                 >
                   Save & Close
                 </button>
 
                 <button
                   onClick={handleDelete}
-                  className="font-semibold text-red-600 border-2 border-red-500 rounded px-3 hover:drop-shadow-lg hover:bg-red-500 hover:text-white duration-500"
+                  className="font-semibold text-red-600 border-2 border-red-500 rounded px-3 py-2 hover:drop-shadow-lg hover:bg-red-500 hover:text-white duration-500"
                 >
                   Remove Task
                 </button>

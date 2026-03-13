@@ -43,7 +43,7 @@ function TaskView({ view, viewId }) {
 
   return (
     <div
-      className="flex flex-col items-center gap-4 min-w-[200px]"
+      className="flex flex-col items-center gap-4 w-full md:w-auto md:min-w-[200px]"
       onDrop={handleOnDrop}
       onDragOver={(e) => e.preventDefault()}
     >
@@ -68,7 +68,7 @@ function TaskView({ view, viewId }) {
             draggable
             onDragStart={(e) => handleDrag(e, task, viewId)}
             onClick={() => toggleTaskDrawer(task.id)}
-            className="flex px-3 hover:scale-105 hover:bg-gray-50 duration-300 py-1.5 bg-white drop-shadow-sm rounded w-full cursor-pointer border border-gray-200"
+            className="flex px-3 hover:scale-[1.02] md:hover:scale-105 hover:bg-gray-50 duration-300 py-2 bg-white drop-shadow-sm rounded w-full cursor-pointer border border-gray-200"
           >
             <div className="text-slate-700 font-semibold text-sm">
               {task.title}
