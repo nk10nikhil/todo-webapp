@@ -6,7 +6,12 @@ const HomePage = lazy(() => import("./components/HomePage"));
 function App() {
   return (
     <AppProvider>
-      <Router>
+      <Router
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <Routes>
           <Route exact path="/" element={<HomePage />} />
         </Routes>
