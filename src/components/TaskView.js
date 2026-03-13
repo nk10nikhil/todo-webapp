@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { useTask } from "../context/AppContext";
 import TaskDrawer from "./TaskDrawer";
@@ -7,7 +7,16 @@ function TaskView({ view, viewId }) {
   const [isInputVisible, setIsInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [touchDraggingTaskId, setTouchDraggingTaskId] = useState(null);
   const { changeView, setTaskId, addTask } = useTask();
+  const touchStateRef = useRef({
+    task: null,
+    fromViewId: null,
+    startX: 0,
+    startY: 0,
+    moved: false,
+  });
+  const suppressClickRef = useRef(false);
 
   // * Adds a new task to the view
   const handleNewTask = () => {
@@ -41,9 +50,78 @@ function TaskView({ view, viewId }) {
     changeView(task, fromViewId, viewId);
   };
 
+  const handleTouchStart = (e, task) => {
+    const touch = e.touches[0];
+    touchStateRef.current = {
+      task,
+      fromViewId: viewId,
+      startX: touch.clientX,
+      startY: touch.clientY,
+      moved: false,
+    };
+    setTouchDraggingTaskId(task.id);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!touchStateRef.current.task) {
+      return;
+    }
+
+    const touch = e.touches[0];
+    const moveX = Math.abs(touch.clientX - touchStateRef.current.startX);
+    const moveY = Math.abs(touch.clientY - touchStateRef.current.startY);
+
+    if (moveX > 8 || moveY > 8) {
+      touchStateRef.current.moved = true;
+      // Keep touch dragging responsive by preventing page scroll while dragging.
+      e.preventDefault();
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    const dragState = touchStateRef.current;
+    if (!dragState.task) {
+      return;
+    }
+
+    if (dragState.moved) {
+      const touch = e.changedTouches[0];
+      const droppedElement = document.elementFromPoint(
+        touch.clientX,
+        touch.clientY,
+      );
+      const dropZone = droppedElement?.closest("[data-drop-view-id]");
+      const toViewId = Number(dropZone?.getAttribute("data-drop-view-id"));
+
+      if (toViewId && toViewId !== Number(dragState.fromViewId)) {
+        changeView(dragState.task, dragState.fromViewId, toViewId);
+      }
+
+      suppressClickRef.current = true;
+    }
+
+    touchStateRef.current = {
+      task: null,
+      fromViewId: null,
+      startX: 0,
+      startY: 0,
+      moved: false,
+    };
+    setTouchDraggingTaskId(null);
+  };
+
+  const handleTaskClick = (taskId) => {
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false;
+      return;
+    }
+    toggleTaskDrawer(taskId);
+  };
+
   return (
     <div
       className="flex flex-col items-center gap-4 w-full md:w-auto md:min-w-[200px]"
+      data-drop-view-id={viewId}
       onDrop={handleOnDrop}
       onDragOver={(e) => e.preventDefault()}
     >
@@ -67,8 +145,14 @@ function TaskView({ view, viewId }) {
             key={task.id}
             draggable
             onDragStart={(e) => handleDrag(e, task, viewId)}
-            onClick={() => toggleTaskDrawer(task.id)}
-            className="flex px-3 hover:scale-[1.02] md:hover:scale-105 hover:bg-gray-50 duration-300 py-2 bg-white drop-shadow-sm rounded w-full cursor-pointer border border-gray-200"
+            onTouchStart={(e) => handleTouchStart(e, task)}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchEnd}
+            onClick={() => handleTaskClick(task.id)}
+            className={`flex px-3 hover:scale-[1.02] md:hover:scale-105 hover:bg-gray-50 duration-300 py-2 bg-white drop-shadow-sm rounded w-full cursor-pointer border border-gray-200 ${
+              touchDraggingTaskId === task.id ? "opacity-70" : "opacity-100"
+            }`}
           >
             <div className="text-slate-700 font-semibold text-sm">
               {task.title}
