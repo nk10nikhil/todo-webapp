@@ -32,4 +32,4 @@ If API routes are not available (for example with plain `npm start`), the app st
 
 ## Live Demo
 
-[Click here](https://mytodoonweb.vercel.app/) for actual development
+Click [My Todo Web](https://mytodoonweb.vercel.app/) for visiting site
